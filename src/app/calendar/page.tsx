@@ -58,7 +58,7 @@ export default function CalendarPage() {
     if (!selectedDateKey) return;
     saveRecord(selectedDateKey, choice, diary);
     setRecords(getAllRecords());
-    setSelectedDateKey(null);
+    // Sheetはネコメッセージを表示するため、ここでは閉じずユーザー操作に委ねる
   }
 
   if (!loaded) {

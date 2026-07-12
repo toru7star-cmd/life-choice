@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import CatMessageCard from "@/components/CatMessageCard";
 import ChoiceSelector from "@/components/ChoiceSelector";
 import DiaryInput from "@/components/DiaryInput";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { CatMessage, catMessageProvider } from "@/lib/cat-message";
 import { formatDateJa } from "@/lib/date";
 import { CHOICE_ICONS, CHOICE_LABELS, Choice, DailyRecord } from "@/lib/types";
 
@@ -29,10 +31,12 @@ export default function DayDetailSheet({
   const [editing, setEditing] = useState(!record);
   const [choice, setChoice] = useState<Choice | null>(record?.choice ?? null);
   const [diary, setDiary] = useState(record?.diary ?? "");
+  const [catMessage, setCatMessage] = useState<CatMessage | null>(null);
 
   function handleSave() {
     if (!choice) return;
     onSave(choice, diary);
+    setCatMessage(catMessageProvider.getMessage({ choice, diary, recordDate: dateKey }));
   }
 
   return (
@@ -44,7 +48,9 @@ export default function DayDetailSheet({
           </SheetTitle>
         </SheetHeader>
 
-        {editing ? (
+        {catMessage ? (
+          <CatMessageCard catMessage={catMessage} />
+        ) : editing ? (
           <div className="flex flex-col gap-6">
             <ChoiceSelector value={choice} onChange={setChoice} />
             <DiaryInput value={diary} onChange={setDiary} />

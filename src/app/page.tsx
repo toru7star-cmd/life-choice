@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import CatMessageCard from "@/components/CatMessageCard";
 import ChoiceSelector from "@/components/ChoiceSelector";
 import DiaryInput from "@/components/DiaryInput";
 import { Button } from "@/components/ui/button";
+import { CatMessage, catMessageProvider } from "@/lib/cat-message";
 import { formatDateJa, todayKey } from "@/lib/date";
 import { getRecordByDate, saveRecord } from "@/lib/storage";
 import { Choice } from "@/lib/types";
@@ -14,6 +16,7 @@ export default function TodayPage() {
   const [mode, setMode] = useState<"form" | "done">("form");
   const [choice, setChoice] = useState<Choice | null>(null);
   const [diary, setDiary] = useState("");
+  const [catMessage, setCatMessage] = useState<CatMessage | null>(null);
 
   useEffect(() => {
     const dateKey = todayKey();
@@ -31,7 +34,9 @@ export default function TodayPage() {
 
   function handleSave() {
     if (!choice) return;
-    saveRecord(todayKey(), choice, diary);
+    const dateKey = todayKey();
+    saveRecord(dateKey, choice, diary);
+    setCatMessage(catMessageProvider.getMessage({ choice, diary, recordDate: dateKey }));
     setHasSavedToday(true);
     setMode("done");
   }
@@ -51,6 +56,7 @@ export default function TodayPage() {
             <br />
             もうスマホを閉じて大丈夫です。
           </p>
+          {catMessage && <CatMessageCard catMessage={catMessage} />}
           <button
             type="button"
             onClick={() => setMode("form")}
