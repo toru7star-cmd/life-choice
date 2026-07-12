@@ -69,13 +69,14 @@ export default function DataManagementSection({
   function handleConfirmImport() {
     if (!pendingImport) return;
     setIsImporting(true);
-    // 「復元中」表示を確実に一度描画させてから実処理・クローズを行う
+    // 0msだと描画されるより先に処理が終わってしまうことがあるため、
+    // 「復元中」の表示が確実に目に見える時間を確保してから実処理・クローズを行う
     window.setTimeout(() => {
       importBackup(pendingImport);
       setIsImporting(false);
       setPendingImport(null);
       onDataChanged();
-    }, 0);
+    }, 400);
   }
 
   function handleClearAll() {
@@ -85,7 +86,7 @@ export default function DataManagementSection({
       setIsDeleting(false);
       setIsDeleteDialogOpen(false);
       onDataChanged();
-    }, 0);
+    }, 400);
   }
 
   return (
