@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import CatCompletionView from "@/components/CatCompletionView";
+import ChoiceIcon from "@/components/ChoiceIcon";
 import ChoiceSelector from "@/components/ChoiceSelector";
 import DiaryInput from "@/components/DiaryInput";
 import TagSelector from "@/components/TagSelector";
@@ -26,7 +27,7 @@ import {
 import { CatMessage, catMessageProvider } from "@/lib/cat-message";
 import { formatDateJa } from "@/lib/date";
 import { getCategoryItemsByIds } from "@/lib/storage";
-import { CHOICE_ICONS, CHOICE_LABELS, Choice, DailyRecord } from "@/lib/types";
+import { CHOICE_LABELS, Choice, DailyRecord } from "@/lib/types";
 
 interface DayDetailSheetProps {
   dateKey: string;
@@ -104,9 +105,7 @@ export default function DayDetailSheet({
         ) : record ? (
           <div className="flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none" aria-hidden>
-                {CHOICE_ICONS[record.choice]}
-              </span>
+              <ChoiceIcon choice={record.choice} size={30} />
               <span className="text-base font-medium text-foreground">
                 {CHOICE_LABELS[record.choice]}
               </span>

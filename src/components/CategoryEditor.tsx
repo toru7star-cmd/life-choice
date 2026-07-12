@@ -2,6 +2,7 @@
 
 import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react";
 import { useState } from "react";
+import ChoiceIcon from "@/components/ChoiceIcon";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { CHOICE_ICONS, CHOICE_LABELS, Choice, UserCategoryItem } from "@/lib/types";
+import { CHOICE_LABELS, Choice, UserCategoryItem } from "@/lib/types";
 
 interface CategoryEditorProps {
   category: Choice;
@@ -46,9 +47,7 @@ export default function CategoryEditor({
     <Card className="mb-6">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
-          <span className="text-lg" aria-hidden>
-            {CHOICE_ICONS[category]}
-          </span>
+          <ChoiceIcon choice={category} size={20} />
           {CHOICE_LABELS[category]}
         </CardTitle>
       </CardHeader>

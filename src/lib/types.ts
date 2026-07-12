@@ -23,10 +23,4 @@ export const CHOICE_LABELS: Record<Choice, string> = {
   drift: "なんとなく過ごした",
 };
 
-export const CHOICE_ICONS: Record<Choice, string> = {
-  future: "🌱",
-  present: "😊",
-  drift: "⏳",
-};
-
 export const CHOICE_ORDER: Choice[] = ["future", "present", "drift"];

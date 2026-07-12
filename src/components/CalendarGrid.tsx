@@ -1,7 +1,8 @@
 "use client";
 
+import ChoiceIcon from "@/components/ChoiceIcon";
 import { getMonthMatrix, isFutureDate, toDateKey, WEEKDAY_LABELS } from "@/lib/date";
-import { CHOICE_ICONS, Choice } from "@/lib/types";
+import { Choice } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface CalendarGridProps {
@@ -54,9 +55,9 @@ export default function CalendarGrid({
                 )}
               >
                 <span className="text-xs text-muted-foreground">{date.getDate()}</span>
-                <span className="text-2xl leading-none" aria-hidden>
-                  {choice ? CHOICE_ICONS[choice] : ""}
-                </span>
+                <div className="flex h-6 items-center justify-center">
+                  {choice && <ChoiceIcon choice={choice} size={24} />}
+                </div>
               </button>
             );
           })

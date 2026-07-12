@@ -1,8 +1,9 @@
 "use client";
 
 import { CheckIcon } from "lucide-react";
+import ChoiceIcon from "@/components/ChoiceIcon";
 import { Button } from "@/components/ui/button";
-import { CHOICE_ICONS, CHOICE_LABELS, CHOICE_ORDER, Choice } from "@/lib/types";
+import { CHOICE_LABELS, CHOICE_ORDER, Choice } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface ChoiceSelectorProps {
@@ -27,9 +28,7 @@ export default function ChoiceSelector({ value, onChange }: ChoiceSelectorProps)
               isSelected && "ring-1 ring-foreground/15"
             )}
           >
-            <span className="text-3xl leading-none" aria-hidden>
-              {CHOICE_ICONS[choice]}
-            </span>
+            <ChoiceIcon choice={choice} size={30} />
             <span className="flex-1 text-base font-medium whitespace-normal">
               {CHOICE_LABELS[choice]}
             </span>

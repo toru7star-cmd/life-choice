@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import ChoiceIcon from "@/components/ChoiceIcon";
 import DayDetailSheet from "@/components/DayDetailSheet";
 import SettingsGearLink from "@/components/SettingsGearLink";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +16,7 @@ import {
   getCategoryItemsByIds,
   saveRecord,
 } from "@/lib/storage";
-import { CHOICE_ICONS, CHOICE_ORDER, Choice, DailyRecord } from "@/lib/types";
+import { CHOICE_ORDER, Choice, DailyRecord } from "@/lib/types";
 
 type Period = "week" | "month" | "all";
 
@@ -94,8 +95,8 @@ export default function ReflectionPage() {
 
       <div className="mb-6 flex justify-center gap-6 text-sm text-muted-foreground">
         {CHOICE_ORDER.map((choice) => (
-          <span key={choice}>
-            {CHOICE_ICONS[choice]} {counts[choice]}件
+          <span key={choice} className="inline-flex items-center gap-1">
+            <ChoiceIcon choice={choice} size={18} /> {counts[choice]}件
           </span>
         ))}
       </div>
@@ -116,9 +117,7 @@ export default function ReflectionPage() {
                   className="w-full rounded-2xl border px-4 py-3 text-left"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-lg leading-none" aria-hidden>
-                      {CHOICE_ICONS[record.choice]}
-                    </span>
+                    <ChoiceIcon choice={record.choice} size={20} />
                     <span className="text-sm text-muted-foreground">
                       {formatDateShortJa(record.recordDate)}
                     </span>
