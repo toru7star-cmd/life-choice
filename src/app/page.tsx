@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CatMessageCard from "@/components/CatMessageCard";
+import CatCompletionView from "@/components/CatCompletionView";
 import ChoiceSelector from "@/components/ChoiceSelector";
 import DiaryInput from "@/components/DiaryInput";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,13 @@ export default function TodayPage() {
       setDiary(existing.diary);
       setHasSavedToday(true);
       setMode("done");
+      setCatMessage(
+        catMessageProvider.getMessage({
+          choice: existing.choice,
+          diary: existing.diary,
+          recordDate: dateKey,
+        })
+      );
     }
     setLoaded(true);
   }, []);
@@ -47,24 +54,23 @@ export default function TodayPage() {
 
   return (
     <div className="flex flex-1 flex-col px-6 pt-10 pb-6">
-      <p className="mb-8 text-sm text-muted-foreground">{formatDateJa(todayKey())}</p>
+      {mode === "form" && (
+        <p className="mb-8 text-sm text-muted-foreground">{formatDateJa(todayKey())}</p>
+      )}
 
       {mode === "done" ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-8 text-center">
-          <p className="text-2xl leading-relaxed font-medium text-foreground">
-            今日の記録ができました。
-            <br />
-            もうスマホを閉じて大丈夫です。
-          </p>
-          {catMessage && <CatMessageCard catMessage={catMessage} />}
-          <button
-            type="button"
-            onClick={() => setMode("form")}
-            className="text-sm text-muted-foreground underline underline-offset-4"
-          >
-            記録を見直す
-          </button>
-        </div>
+        catMessage && (
+          <div className="flex flex-1 flex-col">
+            <CatCompletionView catMessage={catMessage} />
+            <button
+              type="button"
+              onClick={() => setMode("form")}
+              className="mb-2 self-center text-sm text-muted-foreground underline underline-offset-4"
+            >
+              記録を見直す
+            </button>
+          </div>
+        )
       ) : (
         <div className="flex flex-1 flex-col gap-8">
           <div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import CatMessageCard from "@/components/CatMessageCard";
+import CatCompletionView from "@/components/CatCompletionView";
 import ChoiceSelector from "@/components/ChoiceSelector";
 import DiaryInput from "@/components/DiaryInput";
 import { Button } from "@/components/ui/button";
@@ -42,14 +42,16 @@ export default function DayDetailSheet({
   return (
     <Sheet open onOpenChange={(open) => !open && onClose()}>
       <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl px-6 pb-8">
-        <SheetHeader className="px-0">
-          <SheetTitle className="text-sm font-normal text-muted-foreground">
-            {formatDateJa(dateKey)}
-          </SheetTitle>
-        </SheetHeader>
+        {!catMessage && (
+          <SheetHeader className="px-0">
+            <SheetTitle className="text-sm font-normal text-muted-foreground">
+              {formatDateJa(dateKey)}
+            </SheetTitle>
+          </SheetHeader>
+        )}
 
         {catMessage ? (
-          <CatMessageCard catMessage={catMessage} />
+          <CatCompletionView catMessage={catMessage} onClose={onClose} />
         ) : editing ? (
           <div className="flex flex-col gap-6">
             <ChoiceSelector value={choice} onChange={setChoice} />
