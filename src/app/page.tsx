@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import CatCompletionView from "@/components/CatCompletionView";
 import ChoiceSelector from "@/components/ChoiceSelector";
 import DiaryInput from "@/components/DiaryInput";
+import SettingsGearLink from "@/components/SettingsGearLink";
+import TagSelector from "@/components/TagSelector";
 import { Button } from "@/components/ui/button";
 import { CatMessage, catMessageProvider } from "@/lib/cat-message";
 import { formatDateJa, todayKey } from "@/lib/date";
@@ -16,6 +18,7 @@ export default function TodayPage() {
   const [mode, setMode] = useState<"form" | "done">("form");
   const [choice, setChoice] = useState<Choice | null>(null);
   const [diary, setDiary] = useState("");
+  const [categoryItemIds, setCategoryItemIds] = useState<string[]>([]);
   const [catMessage, setCatMessage] = useState<CatMessage | null>(null);
 
   useEffect(() => {
@@ -26,6 +29,7 @@ export default function TodayPage() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setChoice(existing.choice);
       setDiary(existing.diary);
+      setCategoryItemIds(existing.categoryItemIds);
       setHasSavedToday(true);
       setMode("done");
       setCatMessage(
@@ -39,10 +43,17 @@ export default function TodayPage() {
     setLoaded(true);
   }, []);
 
+  function handleChoiceChange(newChoice: Choice) {
+    if (newChoice !== choice) {
+      setCategoryItemIds([]);
+    }
+    setChoice(newChoice);
+  }
+
   function handleSave() {
     if (!choice) return;
     const dateKey = todayKey();
-    saveRecord(dateKey, choice, diary);
+    saveRecord(dateKey, choice, diary, categoryItemIds);
     setCatMessage(catMessageProvider.getMessage({ choice, diary, recordDate: dateKey }));
     setHasSavedToday(true);
     setMode("done");
@@ -53,7 +64,9 @@ export default function TodayPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col px-6 pt-10 pb-6">
+    <div className="relative flex flex-1 flex-col px-6 pt-10 pb-6">
+      <SettingsGearLink />
+
       {mode === "form" && (
         <p className="mb-8 text-sm text-muted-foreground">{formatDateJa(todayKey())}</p>
       )}
@@ -73,11 +86,21 @@ export default function TodayPage() {
         )
       ) : (
         <div className="flex flex-1 flex-col gap-8">
-          <div>
-            <h1 className="mb-5 text-lg font-medium text-foreground">
-              今日はどんな一日でしたか
-            </h1>
-            <ChoiceSelector value={choice} onChange={setChoice} />
+          <div className="flex flex-col gap-4">
+            <div>
+              <h1 className="mb-5 text-lg font-medium text-foreground">
+                今日はどんな一日でしたか
+              </h1>
+              <ChoiceSelector value={choice} onChange={handleChoiceChange} />
+            </div>
+
+            {choice && (
+              <TagSelector
+                category={choice}
+                selectedIds={categoryItemIds}
+                onChange={setCategoryItemIds}
+              />
+            )}
           </div>
 
           <DiaryInput value={diary} onChange={setDiary} />

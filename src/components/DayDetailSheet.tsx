@@ -4,6 +4,7 @@ import { useState } from "react";
 import CatCompletionView from "@/components/CatCompletionView";
 import ChoiceSelector from "@/components/ChoiceSelector";
 import DiaryInput from "@/components/DiaryInput";
+import TagSelector from "@/components/TagSelector";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,13 +25,14 @@ import {
 } from "@/components/ui/sheet";
 import { CatMessage, catMessageProvider } from "@/lib/cat-message";
 import { formatDateJa } from "@/lib/date";
+import { getCategoryItemsByIds } from "@/lib/storage";
 import { CHOICE_ICONS, CHOICE_LABELS, Choice, DailyRecord } from "@/lib/types";
 
 interface DayDetailSheetProps {
   dateKey: string;
   record: DailyRecord | undefined;
   onClose: () => void;
-  onSave: (choice: Choice, diary: string) => void;
+  onSave: (choice: Choice, diary: string, categoryItemIds: string[]) => void;
   onDelete: () => void;
 }
 
@@ -44,13 +46,25 @@ export default function DayDetailSheet({
   const [editing, setEditing] = useState(!record);
   const [choice, setChoice] = useState<Choice | null>(record?.choice ?? null);
   const [diary, setDiary] = useState(record?.diary ?? "");
+  const [categoryItemIds, setCategoryItemIds] = useState<string[]>(
+    record?.categoryItemIds ?? []
+  );
   const [catMessage, setCatMessage] = useState<CatMessage | null>(null);
+
+  function handleChoiceChange(newChoice: Choice) {
+    if (newChoice !== choice) {
+      setCategoryItemIds([]);
+    }
+    setChoice(newChoice);
+  }
 
   function handleSave() {
     if (!choice) return;
-    onSave(choice, diary);
+    onSave(choice, diary, categoryItemIds);
     setCatMessage(catMessageProvider.getMessage({ choice, diary, recordDate: dateKey }));
   }
+
+  const tags = record ? getCategoryItemsByIds(record.categoryItemIds) : [];
 
   return (
     <Sheet open onOpenChange={(open) => !open && onClose()}>
@@ -67,7 +81,16 @@ export default function DayDetailSheet({
           <CatCompletionView catMessage={catMessage} onClose={onClose} />
         ) : editing ? (
           <div className="flex flex-col gap-6">
-            <ChoiceSelector value={choice} onChange={setChoice} />
+            <div className="flex flex-col gap-4">
+              <ChoiceSelector value={choice} onChange={handleChoiceChange} />
+              {choice && (
+                <TagSelector
+                  category={choice}
+                  selectedIds={categoryItemIds}
+                  onChange={setCategoryItemIds}
+                />
+              )}
+            </div>
             <DiaryInput value={diary} onChange={setDiary} />
             <Button
               type="button"
@@ -88,6 +111,18 @@ export default function DayDetailSheet({
                 {CHOICE_LABELS[record.choice]}
               </span>
             </div>
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <span
+                    key={tag.id}
+                    className="rounded-full border border-border px-3 py-1 text-sm text-muted-foreground"
+                  >
+                    {tag.label}
+                  </span>
+                ))}
+              </div>
+            )}
             {record.diary && (
               <p className="rounded-2xl bg-muted/50 px-4 py-3 text-sm leading-relaxed text-foreground">
                 {record.diary}

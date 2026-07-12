@@ -20,6 +20,24 @@ export function parseDateKey(dateKey: string): Date {
   return new Date(year, month - 1, day);
 }
 
+export function isInCurrentWeek(dateKey: string): boolean {
+  const date = parseDateKey(dateKey);
+  const now = new Date();
+  const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+  const endOfWeek = new Date(
+    startOfWeek.getFullYear(),
+    startOfWeek.getMonth(),
+    startOfWeek.getDate() + 6
+  );
+  return date >= startOfWeek && date <= endOfWeek;
+}
+
+export function isInCurrentMonth(dateKey: string): boolean {
+  const now = new Date();
+  const prefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  return dateKey.startsWith(prefix);
+}
+
 export function getMonthMatrix(year: number, month: number): (Date | null)[][] {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
@@ -53,4 +71,9 @@ export function formatMonthTitle(year: number, month: number): string {
 export function formatDateJa(dateKey: string): string {
   const date = parseDateKey(dateKey);
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+}
+
+export function formatDateShortJa(dateKey: string): string {
+  const date = parseDateKey(dateKey);
+  return `${date.getMonth() + 1}月${date.getDate()}日`;
 }

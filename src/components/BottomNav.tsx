@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/", label: "今日", icon: "📝" },
   { href: "/calendar", label: "カレンダー", icon: "📅" },
-  { href: "/settings", label: "設定", icon: "⚙️" },
+  { href: "/reflection", label: "振り返り", icon: "📖" },
 ] as const;
 
 export default function BottomNav() {

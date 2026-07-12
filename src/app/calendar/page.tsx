@@ -4,6 +4,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import CalendarGrid from "@/components/CalendarGrid";
 import DayDetailSheet from "@/components/DayDetailSheet";
+import SettingsGearLink from "@/components/SettingsGearLink";
 import { Button } from "@/components/ui/button";
 import { formatMonthTitle, isFutureDate } from "@/lib/date";
 import { deleteRecord, getAllRecords, saveRecord } from "@/lib/storage";
@@ -55,9 +56,9 @@ export default function CalendarPage() {
     }
   }
 
-  function handleSave(choice: Choice, diary: string) {
+  function handleSave(choice: Choice, diary: string, categoryItemIds: string[]) {
     if (!selectedDateKey) return;
-    saveRecord(selectedDateKey, choice, diary);
+    saveRecord(selectedDateKey, choice, diary, categoryItemIds);
     setRecords(getAllRecords());
     // Sheetはネコメッセージを表示するため、ここでは閉じずユーザー操作に委ねる
   }
@@ -83,7 +84,9 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col px-6 pt-10 pb-6">
+    <div className="relative flex flex-1 flex-col px-6 pt-10 pb-6">
+      <SettingsGearLink />
+
       <div className="mb-6 flex items-center justify-between">
         <Button
           type="button"

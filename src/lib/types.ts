@@ -5,6 +5,7 @@ export interface DailyRecord {
   recordDate: string; // "YYYY-MM-DD"
   choice: Choice;
   diary: string;
+  categoryItemIds: string[];
   createdAt: string; // ISO8601
   updatedAt: string; // ISO8601
 }

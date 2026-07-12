@@ -1,3 +1,4 @@
+import { isFutureDate } from "./date";
 import { Choice, DailyRecord, UserCategoryItem } from "./types";
 
 const RECORDS_KEY = "mindful-log:records";
@@ -29,7 +30,19 @@ function writeJson<T>(key: string, value: T): void {
 // ---- Daily Records ----
 
 export function getAllRecords(): DailyRecord[] {
-  return readJson<DailyRecord[]>(RECORDS_KEY, []);
+  const records = readJson<DailyRecord[]>(RECORDS_KEY, []);
+  // categoryItemIdsが存在しない旧データも安全に読み込めるようにする。
+  const normalized = records.map((r) => ({
+    ...r,
+    categoryItemIds: r.categoryItemIds ?? [],
+  }));
+  // 未来日付の記録は現在の仕様では作成できないため、過去のバージョンで
+  // 保存されたものが残っていれば読み込み時に取り除いて自己修復する。
+  const validRecords = normalized.filter((r) => !isFutureDate(r.recordDate));
+  if (validRecords.length !== records.length) {
+    writeJson(RECORDS_KEY, validRecords);
+  }
+  return validRecords;
 }
 
 export function getRecordByDate(recordDate: string): DailyRecord | undefined {
@@ -39,7 +52,8 @@ export function getRecordByDate(recordDate: string): DailyRecord | undefined {
 export function saveRecord(
   recordDate: string,
   choice: Choice,
-  diary: string
+  diary: string,
+  categoryItemIds: string[]
 ): DailyRecord {
   const records = getAllRecords();
   const now = new Date().toISOString();
@@ -50,6 +64,7 @@ export function saveRecord(
       ...records[existingIndex],
       choice,
       diary,
+      categoryItemIds,
       updatedAt: now,
     };
     records[existingIndex] = updated;
@@ -62,6 +77,7 @@ export function saveRecord(
     recordDate,
     choice,
     diary,
+    categoryItemIds,
     createdAt: now,
     updatedAt: now,
   };
@@ -110,6 +126,12 @@ export function getCategoriesByType(category: Choice): UserCategoryItem[] {
   return getAllCategories()
     .filter((c) => c.category === category)
     .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+export function getCategoryItemsByIds(ids: string[]): UserCategoryItem[] {
+  if (ids.length === 0) return [];
+  const all = getAllCategories();
+  return all.filter((c) => ids.includes(c.id));
 }
 
 export function addCategory(category: Choice, label: string): UserCategoryItem {

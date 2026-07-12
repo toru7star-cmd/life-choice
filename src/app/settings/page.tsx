@@ -1,5 +1,7 @@
 "use client";
 
+import { ChevronLeftIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CategoryEditor from "@/components/CategoryEditor";
 import {
@@ -11,6 +13,7 @@ import {
 import { CHOICE_ORDER, UserCategoryItem } from "@/lib/types";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [loaded, setLoaded] = useState(false);
   const [categories, setCategories] = useState<UserCategoryItem[]>([]);
 
@@ -53,6 +56,15 @@ export default function SettingsPage() {
 
   return (
     <div className="flex-1 px-6 pt-10 pb-6">
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="mb-6 flex items-center gap-1 text-sm text-muted-foreground"
+      >
+        <ChevronLeftIcon className="size-4" />
+        戻る
+      </button>
+
       <h1 className="mb-1 text-lg font-medium text-foreground">自分の分類</h1>
       <p className="mb-8 text-sm text-muted-foreground">
         あなたにとって、どの行動がどの分類に当たるかを自由に登録できます。

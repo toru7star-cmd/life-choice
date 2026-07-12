@@ -46,9 +46,11 @@ export default function CatCompletionView({ catMessage, onClose }: CatCompletion
         <Image
           src="/cat.png"
           alt=""
-          width={440}
-          height={350}
-          className="h-auto w-full drop-shadow-md"
+          width={436}
+          height={377}
+          className="h-auto w-full select-none drop-shadow-md [-webkit-touch-callout:none]"
+          draggable={false}
+          onContextMenu={(e) => e.preventDefault()}
           priority
         />
         <div className="mx-auto -mt-2 h-3 w-2/3 rounded-full bg-black/10 blur-sm" aria-hidden />
