@@ -1,4 +1,4 @@
-const CACHE_NAME = "mindful-log-v1";
+const CACHE_NAME = "mindful-log-v2";
 const OFFLINE_URLS = ["/", "/calendar", "/settings"];
 
 self.addEventListener("install", (event) => {
@@ -25,6 +25,22 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  // ページ本体は常に最新を優先し、オフライン時のみキャッシュにフォールバックする。
+  // 静的アセット（ハッシュ付きJS/CSS/画像）はURLがコンテンツごとに変わるため、
+  // キャッシュ優先のままで問題ない。
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
