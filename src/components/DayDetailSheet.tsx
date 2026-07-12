@@ -78,7 +78,7 @@ export default function DayDetailSheet({
         )}
 
         {catMessage ? (
-          <CatCompletionView catMessage={catMessage} onClose={onClose} />
+          <CatCompletionView catMessage={catMessage} />
         ) : editing ? (
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-4">

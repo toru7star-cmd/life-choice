@@ -1,24 +1,14 @@
 "use client";
 
-import { CheckIcon, LeafIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { CatMessage } from "@/lib/cat-message";
 
 interface CatCompletionViewProps {
   catMessage: CatMessage;
-  onClose?: () => void;
 }
 
-export default function CatCompletionView({ catMessage, onClose }: CatCompletionViewProps) {
-  function handleClose() {
-    if (onClose) {
-      onClose();
-      return;
-    }
-    window.close();
-  }
-
+export default function CatCompletionView({ catMessage }: CatCompletionViewProps) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-6 text-center">
       <div className="flex flex-col items-center gap-3">
@@ -42,29 +32,19 @@ export default function CatCompletionView({ catMessage, onClose }: CatCompletion
         />
       </div>
 
-      <div className="w-[72%] max-w-[260px]">
+      <div className="w-[60%] max-w-[220px]">
         <Image
           src="/cat.png"
           alt=""
-          width={436}
-          height={377}
-          className="h-auto w-full select-none drop-shadow-md [-webkit-touch-callout:none]"
+          width={715}
+          height={887}
+          className="h-auto w-full select-none [-webkit-touch-callout:none]"
           draggable={false}
           onContextMenu={(e) => e.preventDefault()}
           priority
         />
         <div className="mx-auto -mt-2 h-3 w-2/3 rounded-full bg-black/10 blur-sm" aria-hidden />
       </div>
-
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={handleClose}
-        className="h-12 w-full max-w-xs gap-2 rounded-full text-base font-medium"
-      >
-        アプリを閉じる
-        <LeafIcon className="size-4" aria-hidden />
-      </Button>
     </div>
   );
 }
