@@ -91,6 +91,10 @@ export function deleteRecord(recordDate: string): void {
   writeJson(RECORDS_KEY, records);
 }
 
+export function replaceAllRecords(records: DailyRecord[]): void {
+  writeJson(RECORDS_KEY, records);
+}
+
 // ---- User Categories ----
 
 const DEFAULT_CATEGORIES: Omit<UserCategoryItem, "id">[] = [
@@ -166,4 +170,16 @@ export function reorderCategories(
       : c
   );
   writeJson(CATEGORIES_KEY, updated);
+}
+
+export function replaceAllCategories(categories: UserCategoryItem[]): void {
+  writeJson(CATEGORIES_KEY, categories);
+}
+
+// ---- Data Management ----
+
+export function clearAllData(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(RECORDS_KEY);
+  window.localStorage.removeItem(CATEGORIES_KEY);
 }

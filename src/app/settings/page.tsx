@@ -4,6 +4,7 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CategoryEditor from "@/components/CategoryEditor";
+import DataManagementSection from "@/components/DataManagementSection";
 import {
   addCategory,
   deleteCategory,
@@ -88,6 +89,8 @@ export default function SettingsPage() {
           onMove={handleMove}
         />
       ))}
+
+      <DataManagementSection onDataChanged={refresh} />
     </div>
   );
 }
