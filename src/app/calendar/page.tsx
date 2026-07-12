@@ -5,8 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import CalendarGrid from "@/components/CalendarGrid";
 import DayDetailSheet from "@/components/DayDetailSheet";
 import { Button } from "@/components/ui/button";
-import { formatMonthTitle } from "@/lib/date";
-import { getAllRecords, saveRecord } from "@/lib/storage";
+import { formatMonthTitle, isFutureDate } from "@/lib/date";
+import { deleteRecord, getAllRecords, saveRecord } from "@/lib/storage";
 import { Choice, DailyRecord } from "@/lib/types";
 
 export default function CalendarPage() {
@@ -16,6 +16,7 @@ export default function CalendarPage() {
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
+  const [showFutureNotice, setShowFutureNotice] = useState(false);
 
   useEffect(() => {
     // localStorageはSSR時に読めないため、マウント後にクライアントでのみ読み込む
@@ -61,6 +62,22 @@ export default function CalendarPage() {
     // Sheetはネコメッセージを表示するため、ここでは閉じずユーザー操作に委ねる
   }
 
+  function handleDelete() {
+    if (!selectedDateKey) return;
+    deleteRecord(selectedDateKey);
+    setRecords(getAllRecords());
+    setSelectedDateKey(null);
+  }
+
+  function handleSelectDate(dateKey: string) {
+    if (isFutureDate(dateKey)) {
+      setShowFutureNotice(true);
+      return;
+    }
+    setShowFutureNotice(false);
+    setSelectedDateKey(dateKey);
+  }
+
   if (!loaded) {
     return <div className="flex-1" />;
   }
@@ -95,8 +112,14 @@ export default function CalendarPage() {
         year={year}
         month={month}
         recordMap={recordMap}
-        onSelectDate={setSelectedDateKey}
+        onSelectDate={handleSelectDate}
       />
+
+      {showFutureNotice && (
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+          その日の記録は、その日が来てから残せます。
+        </p>
+      )}
 
       {selectedDateKey && (
         <DayDetailSheet
@@ -104,6 +127,7 @@ export default function CalendarPage() {
           record={selectedRecord}
           onClose={() => setSelectedDateKey(null)}
           onSave={handleSave}
+          onDelete={handleDelete}
         />
       )}
     </div>

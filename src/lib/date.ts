@@ -9,6 +9,12 @@ export function todayKey(): string {
   return toDateKey(new Date());
 }
 
+// "YYYY-MM-DD" は文字列比較がそのまま日付の前後関係と一致するため、
+// 時刻を扱わずに年月日だけで未来日付かどうかを判定できる。
+export function isFutureDate(dateKey: string): boolean {
+  return dateKey > todayKey();
+}
+
 export function parseDateKey(dateKey: string): Date {
   const [year, month, day] = dateKey.split("-").map(Number);
   return new Date(year, month - 1, day);

@@ -70,6 +70,11 @@ export function saveRecord(
   return created;
 }
 
+export function deleteRecord(recordDate: string): void {
+  const records = getAllRecords().filter((r) => r.recordDate !== recordDate);
+  writeJson(RECORDS_KEY, records);
+}
+
 // ---- User Categories ----
 
 const DEFAULT_CATEGORIES: Omit<UserCategoryItem, "id">[] = [

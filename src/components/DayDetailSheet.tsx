@@ -4,6 +4,17 @@ import { useState } from "react";
 import CatCompletionView from "@/components/CatCompletionView";
 import ChoiceSelector from "@/components/ChoiceSelector";
 import DiaryInput from "@/components/DiaryInput";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -20,6 +31,7 @@ interface DayDetailSheetProps {
   record: DailyRecord | undefined;
   onClose: () => void;
   onSave: (choice: Choice, diary: string) => void;
+  onDelete: () => void;
 }
 
 export default function DayDetailSheet({
@@ -27,6 +39,7 @@ export default function DayDetailSheet({
   record,
   onClose,
   onSave,
+  onDelete,
 }: DayDetailSheetProps) {
   const [editing, setEditing] = useState(!record);
   const [choice, setChoice] = useState<Choice | null>(record?.choice ?? null);
@@ -88,6 +101,33 @@ export default function DayDetailSheet({
             >
               編集する
             </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger
+                render={
+                  <button
+                    type="button"
+                    className="self-center text-sm text-muted-foreground underline underline-offset-4"
+                  />
+                }
+              >
+                この日の記録を削除
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>この日の記録を削除しますか？</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    削除した記録は元に戻せません。
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                  <AlertDialogAction variant="destructive" onClick={onDelete}>
+                    記録を削除
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         ) : null}
       </SheetContent>

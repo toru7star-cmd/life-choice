@@ -1,6 +1,6 @@
 "use client";
 
-import { getMonthMatrix, toDateKey, WEEKDAY_LABELS } from "@/lib/date";
+import { getMonthMatrix, isFutureDate, toDateKey, WEEKDAY_LABELS } from "@/lib/date";
 import { CHOICE_ICONS, Choice } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +40,7 @@ export default function CalendarGrid({
             const dateKey = toDateKey(date);
             const choice = recordMap[dateKey];
             const isToday = dateKey === todayStr;
+            const isFuture = isFutureDate(dateKey);
 
             return (
               <button
@@ -47,8 +48,9 @@ export default function CalendarGrid({
                 type="button"
                 onClick={() => onSelectDate(dateKey)}
                 className={cn(
-                  "flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border transition-colors hover:bg-muted",
-                  isToday ? "border-foreground/25" : "border-transparent"
+                  "flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border transition-colors",
+                  isToday ? "border-foreground/25" : "border-transparent",
+                  isFuture ? "opacity-35" : "hover:bg-muted"
                 )}
               >
                 <span className="text-xs text-muted-foreground">{date.getDate()}</span>
