@@ -10,7 +10,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +33,9 @@ export default function DataManagementSection({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [pendingImport, setPendingImport] = useState<BackupData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   function handleExport() {
     downloadBackup(exportBackup());
@@ -66,14 +68,24 @@ export default function DataManagementSection({
 
   function handleConfirmImport() {
     if (!pendingImport) return;
-    importBackup(pendingImport);
-    setPendingImport(null);
-    onDataChanged();
+    setIsImporting(true);
+    // 「復元中」表示を確実に一度描画させてから実処理・クローズを行う
+    window.setTimeout(() => {
+      importBackup(pendingImport);
+      setIsImporting(false);
+      setPendingImport(null);
+      onDataChanged();
+    }, 0);
   }
 
   function handleClearAll() {
-    clearAllData();
-    onDataChanged();
+    setIsDeleting(true);
+    window.setTimeout(() => {
+      clearAllData();
+      setIsDeleting(false);
+      setIsDeleteDialogOpen(false);
+      onDataChanged();
+    }, 0);
   }
 
   return (
@@ -112,37 +124,39 @@ export default function DataManagementSection({
           className="hidden"
         />
 
-        <AlertDialog>
-          <AlertDialogTrigger
-            render={
-              <button
-                type="button"
-                className="self-center text-sm text-muted-foreground underline underline-offset-4"
-              />
-            }
-          >
-            すべてのデータを削除
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>すべての記録と設定を削除しますか？</AlertDialogTitle>
-              <AlertDialogDescription>
-                この操作は元に戻せません。必要な場合は先にバックアップしてください。
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>キャンセル</AlertDialogCancel>
-              <AlertDialogAction variant="destructive" onClick={handleClearAll}>
-                すべて削除
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <button
+          type="button"
+          onClick={() => setIsDeleteDialogOpen(true)}
+          className="self-center text-sm text-muted-foreground underline underline-offset-4"
+        >
+          すべてのデータを削除
+        </button>
       </CardContent>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>すべての記録と設定を削除しますか？</AlertDialogTitle>
+            <AlertDialogDescription>
+              この操作は元に戻せません。必要な場合は先にバックアップしてください。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>キャンセル</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={handleClearAll}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "削除中…" : "すべて削除"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog
         open={pendingImport !== null}
-        onOpenChange={(open) => !open && setPendingImport(null)}
+        onOpenChange={(open) => !open && !isImporting && setPendingImport(null)}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -152,8 +166,10 @@ export default function DataManagementSection({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>キャンセル</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmImport}>復元する</AlertDialogAction>
+            <AlertDialogCancel disabled={isImporting}>キャンセル</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmImport} disabled={isImporting}>
+              {isImporting ? "復元中…" : "復元する"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
