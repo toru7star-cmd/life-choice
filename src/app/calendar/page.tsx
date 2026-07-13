@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import CalendarGrid from "@/components/CalendarGrid";
 import DayDetailSheet from "@/components/DayDetailSheet";
 import SettingsGearLink from "@/components/SettingsGearLink";
+import UnrecordedDaysNote from "@/components/UnrecordedDaysNote";
 import { Button } from "@/components/ui/button";
 import { formatMonthTitle, isFutureDate } from "@/lib/date";
 import { deleteRecord, getAllRecords, saveRecord } from "@/lib/storage";
@@ -123,6 +124,8 @@ export default function CalendarPage() {
           その日の記録は、その日が来てから残せます。
         </p>
       )}
+
+      <UnrecordedDaysNote />
 
       {selectedDateKey && (
         <DayDetailSheet
